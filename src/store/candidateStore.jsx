@@ -22,7 +22,7 @@ const useCandidateStore = create((set) => ({
   }) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/api/candidates/submit`, {
+      const response = await axios.post(`${API_URL}/api/users/submit`, {
         interviewId,
         firstName,
         lastName,

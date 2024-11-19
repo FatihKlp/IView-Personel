@@ -14,7 +14,7 @@ const useVideoStore = create((set) => ({
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await axios.post(`${API_URL}/api/videos`, formData, {
+      const response = await axios.post(`${API_URL}/api/users`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

@@ -12,7 +12,7 @@ const useFetchInterviewStore = create((set) => ({
   fetchInterviewByLink: async (link) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`${API_URL}/api/links/${link}`);
+      const response = await axios.get(`${API_URL}/api/users/${link}`);
       const interview = response.data;
 
       // Publish kontrolü ve süresi dolmuş mu kontrolü
