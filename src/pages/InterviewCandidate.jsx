@@ -13,7 +13,6 @@ const InterviewPage = ({ interview, formData }) => {
   const [videoStarted, setVideoStarted] = useState(false);
   const [recordingStopped, setRecordingStopped] = useState(false);
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState(null);
-  const [filePath, setFilePath] = useState(null);
   const [mediaBlobUrl, setMediaBlobUrl] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -58,16 +57,12 @@ const InterviewPage = ({ interview, formData }) => {
 
   useEffect(() => {
     console.log("uploadedVideoUrl:", uploadedVideoUrl);
-    console.log("filePath:", filePath);
     console.log("recordingStopped:", recordingStopped);
-  }, [uploadedVideoUrl, filePath, recordingStopped]);
+  }, [uploadedVideoUrl, recordingStopped]);
 
   useEffect(() => {
-    if (uploadedVideoUrl && filePath) {
-      console.log("Updated uploadedVideoUrl:", uploadedVideoUrl);
-      console.log("Updated filePath:", filePath);
-    }
-  }, [uploadedVideoUrl, filePath]);
+    console.log("Updated uploadedVideoUrl:", uploadedVideoUrl);
+  }, [uploadedVideoUrl]);
 
   const handleUploadVideo = async () => {
     if (!mediaBlobUrl) return;
@@ -81,12 +76,11 @@ const InterviewPage = ({ interview, formData }) => {
         type: "video/mp4",
       });
 
-      const responseData = await uploadVideo(videoFile);
+      // Backend'den S3 Key alınır
+      const videoKey = await uploadVideo(videoFile);
 
-      // Video ID ve dosya yolu verisini ayarlayın
-      console.log("Full Response Data:", responseData);
-      setUploadedVideoUrl(responseData.videoId);
-      setFilePath(responseData.filePath);
+      console.log("Uploaded S3 Key:", videoKey);
+      setUploadedVideoUrl(videoKey); // Sadece Key'i kaydediyoruz
     } catch (error) {
       console.error("Video upload error:", error);
     } finally {
@@ -95,7 +89,7 @@ const InterviewPage = ({ interview, formData }) => {
   };
 
   const handleCompleteInterview = async () => {
-    if (!uploadedVideoUrl || !filePath) {
+    if (!uploadedVideoUrl) {
       alert("Please wait for the video to finish uploading.");
       return;
     }
@@ -105,7 +99,6 @@ const InterviewPage = ({ interview, formData }) => {
         interviewId: interview._id,
         ...formData,
         videoUrl: uploadedVideoUrl,
-        filePath: filePath,
       });
       alert("Interview completed successfully.");
       window.location.reload();
@@ -223,7 +216,7 @@ const InterviewPage = ({ interview, formData }) => {
                     )}
                   </div>
                 )}
-                {recordingStopped && uploadedVideoUrl && filePath && (
+                {recordingStopped && uploadedVideoUrl && (
                   <div className="flex justify-center w-full mt-4">
                     <button
                       onClick={handleCompleteInterview}

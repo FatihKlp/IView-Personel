@@ -7,7 +7,7 @@ const useVideoStore = create((set) => ({
   loading: false,
   error: null,
 
-  // Yükleme fonksiyonu: sadece filePath döner
+  // Yükleme fonksiyonu: Backend'den dönen anahtar alınır
   uploadVideo: async (file) => {
     set({ loading: true, error: null });
     try {
@@ -18,19 +18,11 @@ const useVideoStore = create((set) => ({
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      const videoData = response.data.files?.[0];
-      console.log("Video data:", videoData); // Yanıtı kontrol edin
+      const videoKey = response.data.key; // Backend artık sadece key döner
+      if (!videoKey) throw new Error("Video yüklenemedi: Anahtar eksik.");
 
-      if (videoData?.fileId && videoData?.filePath) {
-        // Sadece dosya adını almak için split kullanımı
-        const fileName = videoData.filePath.split("/").pop(); // Örneğin: "1731619132754.mp4"
-
-        // Dosya adı ve video ID döndürülür
-        set({ loading: false });
-        return { videoId: videoData.fileId, filePath: fileName };
-      } else {
-        throw new Error("Video yüklenemedi: filePath veya fileId eksik.");
-      }
+      set({ loading: false });
+      return videoKey; // Dönen key
     } catch (error) {
       set({ error: "Video yüklenemedi.", loading: false });
       throw error;

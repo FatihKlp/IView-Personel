@@ -18,7 +18,6 @@ const useCandidateStore = create((set) => ({
     phone,
     kvkk,
     videoUrl,
-    filePath,
   }) => {
     set({ loading: true, error: null });
     try {
@@ -30,7 +29,6 @@ const useCandidateStore = create((set) => ({
         phone,
         kvkk,
         videoUrl,
-        filePath,
       });
       set({ loading: false });
       return response.data;
